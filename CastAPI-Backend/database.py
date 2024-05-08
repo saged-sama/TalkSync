@@ -6,7 +6,7 @@ class database:
         self.con = self.connection.cursor()
 
         self.con.execute('''create table if not exists user
-                         (id integer primary key autoincrement, username text not null, name text)''')
+                         (id integer primary key autoincrement, username text not null, password text not null, name text)''')
         
         self.con.execute('''create table if not exists chat
                           (id integer primary key autoincrement, chatName text, createdOn text)''')
