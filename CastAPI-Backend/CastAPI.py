@@ -19,7 +19,7 @@ class CastAPI:
     def parse_request(self, request):
         req = {}
         lines = request.split("\r\n")
-        # print(lines)
+        print(lines)
 
         method, urlandquery, http_version = lines[0].split(" ")
         # print(method, urlandquery, http_version)
@@ -60,7 +60,7 @@ class CastAPI:
     def handle_request(self, client_socket):
         try:
             request = client_socket.recv(65536).decode()
-            # print(f"Received request:\n{request}\n")
+            print(f"Received request:\n{request}\n")
             req = self.parse_request(request)
 
             path = req["url"]
