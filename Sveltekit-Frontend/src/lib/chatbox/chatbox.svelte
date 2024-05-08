@@ -5,14 +5,22 @@
             name: "Server",
             time: "12:15",
             message:
-                "Hello whacsd ckadckhbhakbcts'up ajbdjkad hajk s d abdkcadc",
+                "hi",
+            image: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
+        },
+        {
+            userId: "123",
+            name: "Server",
+            time: "12:15",
+            message:
+                "hi",
             image: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
         },
         {
             userId: "123",
             name: "Emon",
             time: "12:15",
-            message: "Hello from Serverdaedabdak ajbaked jdabeidka edaved",
+            message: "hi",
             image: "https://media.licdn.com/dms/image/D5603AQFrSXRsDj5a9A/profile-displayphoto-shrink_400_400/0/1714418121284?e=1720656000&v=beta&t=zpWTFgXJaNBxenDjASrwqfZaTG1llNn877hCJsWvmTo",
         },
     ];
@@ -44,9 +52,9 @@
     };
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col w-full item-center justify-center bg-red-100">
     {#each messages as message}
-        <div class="flex items-start gap-2.5 mb-4">
+        <div class="flex item-center justify-center gap-2.5 mb-4">
             <!-- svelte-ignore a11y-img-redundant-alt -->
             {#if message.name != "Emon"}
                 <!-- svelte-ignore a11y-img-redundant-alt -->
@@ -78,7 +86,7 @@
                 </button>
             {/if}
             <div
-                class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700"
+                class="flex flex-col w-1/2  leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700"
             >
                 <div class="flex items-center space-x-2 rtl:space-x-reverse">
                     <span
@@ -110,7 +118,7 @@
             {/if}
         </div>
     {/each}
-    <label class="input input-bordered flex items-center gap-2">
+    <label class="input input-bordered flex items-center gap-2 w-1/2">
         <input type="text" class="grow" placeholder="Search" bind:value={msg} />
         <button on:click={send}><SendHorizonal class="h-4 w-4" /></button>
     </label>
