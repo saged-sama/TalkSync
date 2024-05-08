@@ -24,7 +24,6 @@ def register(req):
             "message": "Could not add new user"
         })
 
-# Auth
 @app.route("/log-in", "POST")
 def register(req):
     try:
