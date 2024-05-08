@@ -19,18 +19,26 @@ class CastAPI:
     def parse_request(self, request):
         req = {}
         lines = request.split("\r\n")
+        # print(lines)
 
         method, urlandquery, http_version = lines[0].split(" ")
+        # print(method, urlandquery, http_version)
         
-        url, queries = urlandquery.split("?")
+        if '?' in urlandquery:
+            url, queries = urlandquery.split("?")
+        else:
+            url = urlandquery
+            queries = ""
         query = {}
         headers = {}
         for q in queries.split("&"):
+            if "=" not in q:
+                continue
             var, val = q.split("=")
             query[var] = val
 
         for line in lines[1: -2]:
-            if line == "":
+            if line == "" or ": " not in line:
                 continue
             name, value = line.split(": ")
             headers[name] = value
@@ -46,6 +54,7 @@ class CastAPI:
             "headers": headers,
             "body": body
         }
+        # print(req)
         return req
     
     def handle_request(self, client_socket):
@@ -115,7 +124,8 @@ class CastAPI:
             
             headers += f"Content-type: {content_type}" + "\r\n"
             if self.cors:
-                headers += f'Access-Control-Allow-Origin: {req["headers"]["Origin"]}\r\n'
+                if "Origin" in req["headers"]:
+                    headers += f'Access-Control-Allow-Origin: {req["headers"]["Origin"]}\r\n'
                 headers += 'Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n'
                 headers += 'Access-Control-Allow-Credentials: true\r\n'
                 headers += 'Access-Control-Allow-Headers: Content-Type\r\n'
