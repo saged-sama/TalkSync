@@ -1,5 +1,27 @@
 # TalkSync
-TalkSync is a text messaging web application that allows text, images, and file transfer
+TalkSync is a text messaging web application that features real time text messaging, image and file sharing services
+
+## Installation
+
+Copy Repository:
+```bash
+git clone https://github.com/saged-sama/TalkSync.git
+```
+
+**Frontend:** <br>
+Go to the `Sveltekit-Frontend` directory and run:
+```bash
+npm install    # install dependencies
+
+npm run dev    # run development
+
+# or
+
+npm build      # build project
+```
+
+**Backend:** <br>
+Set up environment variables for the pocketbase database
 
 ## Technology
 
