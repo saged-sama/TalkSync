@@ -51,7 +51,19 @@
       console.log(e);
     }
   };
-
+  const addMessage = () => {
+    
+    const newMessage = {
+      userId: "123",
+      name: "Emon",
+      time: "9:17",
+      message: "Hello friend",
+      image:
+        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
+    }
+    messages = [...messages, newMessage]
+    console.log(messages)
+  }
 </script>
 
 <div class="flex flex-col w-full h-full items-center justify-center">
@@ -60,7 +72,7 @@
   >
     <div class="h-1/6"></div>
     <div
-      class="flex flex-col items-end justify-end gap-2 w-full px-10 h-4/6 bg-neutral overflow-y-auto"
+      class="flex flex-col items-end justify-end gap-2 w-full px-20 h-4/6 bg-neutral overflow-y-auto"
     >
       {#each messages as message}
         {#if message.name === "Emon"}
@@ -102,8 +114,8 @@
     </div>
     <div class="flex justify-center w-full h-1/6">
       <label class="input input-bordered flex items-center gap-2 w-full">
-        <input type="text" class="grow" placeholder="Write a message..." bind:value={msg} />
-        <button on:click={send}><SendHorizonal class="h-4 w-4" /></button>
+        <input type="text" class="grow" placeholder="Write a message" bind:value={msg} />
+        <button on:click={addMessage}><SendHorizonal class="h-4 w-4" /></button>
       </label>
     </div>
   </div>

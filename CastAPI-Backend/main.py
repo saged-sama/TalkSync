@@ -67,4 +67,19 @@ def post_message(req):
             "message": "Could not add message"
         })
 
+@app.route("/get-messages", "GET")
+def get_messages(req):
+    try:
+        userId = req["body"]["userid"]
+
+        db.con.execute("select * from message where userid = ?", [userId])
+        message = db.con.fetchone()[0]
+        return (200, {
+            "message": message
+        })
+    except Exception as e:
+        return (500, {
+            "message": "paisi na"
+        })
+
 app.listen(8000, cors=True)
