@@ -52,7 +52,6 @@
     }
   };
   const addMessage = () => {
-    
     const newMessage = {
       userId: "123",
       name: "Emon",
@@ -60,63 +59,56 @@
       message: "Hello friend",
       image:
         "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-    }
-    messages = [...messages, newMessage]
-    console.log(messages)
-  }
+    };
+    messages = [...messages, newMessage];
+    console.log(messages);
+  };
 </script>
 
-<div class="flex flex-col w-full h-full items-center justify-center">
-  <div
-    class="flex flex-col w-1/2 h-full items-center justify-center gap-2"
-  >
-    <div class="h-1/6"></div>
-    <div
-      class="flex flex-col items-end justify-end gap-2 w-full px-20 h-4/6 bg-neutral overflow-y-auto"
-    >
-      {#each messages as message}
-        {#if message.name === "Emon"}
-          <div class="chat w-full chat-end">
-            <div class="chat-image avatar">
-              <div class="w-10 rounded-full">
-                <img
-                  alt="Tailwind CSS chat bubble component"
-                  src={message.image}
-                />
-              </div>
-            </div>
-            <div class="chat-header">
-              {message.name}
-              <time class="text-xs opacity-50">{message.time}</time>
-            </div>
-            <div class="chat-bubble chat-bubble-accent">{message.message}</div>
-            <div class="chat-footer opacity-50">Seen at 12:46</div>
+<div
+  class="flex flex-col gap-2 w-full px-5 h-full bg-neutral overflow-y-scroll"
+>
+  {#each messages as message}
+    {#if message.name === "Emon"}
+      <div class="chat w-full chat-end">
+        <div class="chat-image avatar">
+          <div class="w-10 rounded-full">
+            <img alt="Tailwind CSS chat bubble component" src={message.image} />
           </div>
-        {:else}
-          <div class="chat w-full chat-start">
-            <div class="chat-image avatar">
-              <div class="w-10 rounded-full">
-                <img
-                  alt="Tailwind CSS chat bubble component"
-                  src={message.image}
-                />
-              </div>
-            </div>
-            <div class="chat-header">
-              {message.name}
-              <time class="text-xs opacity-50">{message.time}</time>
-            </div>
-            <div class="chat-bubble chat-bubble-info">{message.message}</div>
-            <div class="chat-footer opacity-50">Delivered</div>
+        </div>
+        <div class="chat-header">
+          {message.name}
+          <time class="text-xs opacity-50">{message.time}</time>
+        </div>
+        <div class="chat-bubble chat-bubble-accent">{message.message}</div>
+        <div class="chat-footer opacity-50">Seen at 12:46</div>
+      </div>
+    {:else}
+      <div class="chat w-full chat-start">
+        <div class="chat-image avatar">
+          <div class="w-10 rounded-full">
+            <img alt="Tailwind CSS chat bubble component" src={message.image} />
           </div>
-        {/if}
-      {/each}
-    </div>
-    <div class="flex justify-center w-full h-1/6">
-      <label class="input input-bordered flex items-center gap-2 w-full">
-        <input type="text" class="grow" placeholder="Write a message" bind:value={msg} />
-        <button on:click={addMessage}><SendHorizonal class="h-4 w-4" /></button>
-      </label>
-    </div>
-  </div>
+        </div>
+        <div class="chat-header">
+          {message.name}
+          <time class="text-xs opacity-50">{message.time}</time>
+        </div>
+        <div class="chat-bubble chat-bubble-info">{message.message}</div>
+        <div class="chat-footer opacity-50">Delivered</div>
+      </div>
+    {/if}
+  {/each}
+</div>
+<div class="flex justify-center w-full">
+  <label class="input input-bordered flex items-center gap-2 w-full">
+    <input
+      type="text"
+      class="grow"
+      placeholder="Write a message"
+      bind:value={msg}
+      on:submit={addMessage}
+    />
+    <button on:click={addMessage}><SendHorizonal class="h-4 w-4" /></button>
+  </label>
 </div>

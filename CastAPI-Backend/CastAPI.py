@@ -4,8 +4,8 @@ import json
 
 class CastAPI:
     def __init__(self):
-        # self.host = socket.gethostbyname("localhost")
-        self.host = "172.29.176.1"
+        self.host = socket.gethostbyname("localhost")
+        # self.host = "172.29.176.1"
         self.port = 5671
         self.cors = False
         self.routes = {}
@@ -20,7 +20,7 @@ class CastAPI:
     def parse_request(self, request):
         req = {}
         lines = request.split("\r\n")
-        print(lines)
+        # print(lines)
 
         method, urlandquery, http_version = lines[0].split(" ")
         # print(method, urlandquery, http_version)
@@ -55,7 +55,7 @@ class CastAPI:
             "headers": headers,
             "body": body
         }
-        # print(req)
+        print(req)
         return req
     
     def handle_request(self, client_socket):
