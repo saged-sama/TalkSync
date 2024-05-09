@@ -1,3 +1,4 @@
+import { PUBLIC_SERVER_HOST, PUBLIC_SERVER_PORT } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 
 export const actions = {
@@ -17,7 +18,7 @@ export const actions = {
 
 const dbregister = async (username: string, name: string, password: string) => {
     try {
-        const response = await fetch("http://localhost:8000/sign-up", {
+        const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/sign-up`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

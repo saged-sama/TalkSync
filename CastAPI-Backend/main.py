@@ -6,6 +6,16 @@ def main():
     users = {
         'saged': ('sajid', 'notadoctor')
     }
+    chats = {
+        "saged-emon": [
+            {
+                "sender": "saged",
+                "time": datetime.now(),
+                "message": "hello",
+                "image": "image"
+            }
+        ]
+    }
 
     # Auth
     @app.route("/sign-up", "POST")
@@ -51,58 +61,80 @@ def main():
     def search_username(req):
         try:
             searchUser = req["query"]["user"]
-            print(searchUser)
             results = []
             for username in users:
                 if searchUser in username:
                     name, _ = users[username]
                     results.append({"username": username, "name": name})
-                    print(searchUser, username)
-            print(results)
             return (200, {
                 "users": results
             })
         except Exception as e:
+            print("Could not search usernames: ", e)
             return (500, {
                 "message": "Could not search usernames"
             })
+    
+    @app.route("/get-users", "GET")
+    def get_users(req):
+        try:
+            results = []
+            for username in users:
+                name, _ = users[username]
+                results.append({"username": username, "name": name})
+            return (200, {
+                "users": results
+            })
+        except Exception as e:
+            print("Could not get users: ", e)
+            return (500, {
+                "message": "Could not search users"
+            })
+            
 
-    # # Chat
-    # @app.route("/post-message", "POST")
-    # def post_message(req):
-    #     try:
-    #         chatID = req["body"]["chatID"]
-    #         userID = req["body"]["userID"]
-    #         message = req["body"]["message"]
-    #         media = req["body"]["media"]
+    # Chat
+    @app.route("/add-message", "POST")
+    def post_message(req):
+        try:
+            chatID = req["query"]["chatID"]
+            message = req["body"]["message"]
+            sender = req["body"]["sender"]
+            image = req["body"]["image"]
+            date = datetime.now().strftime("%Y-%m-%%d %H:%M:%S")
 
-    #         date = datetime.now().strftime("%Y-%m-%%d %H:%M:%S")
+            chats[chatID].append({
+                "sender": sender,
+                "time": date,
+                "message": message,
+                "image": image
+            })
 
-    #         db.con.execute("insert into message values(?, ?, ?, ?, ?)", [chatID, userID, message, media, date])
-    #         return (200, {
-    #             "message": "successfully added message"
-    #         })
+            return (200, {
+                "messages": chats[chatID]
+            })
 
-    #     except Exception as e:
-    #         print(f"Error posting new Message: {e}")
-    #         return (400, {
-    #             "message": "Could not add message"
-    #         })
+        except Exception as e:
+            print(f"Error posting new Message: {e}")
+            return (400, {
+                "message": "Could not add message"
+            })
 
-    # @app.route("/get-messages", "GET")
-    # def get_messages(req):
-    #     try:
-    #         userId = req["body"]["userid"]
-
-    #         db.con.execute("select * from message where userid = ?", [userId])
-    #         message = db.con.fetchone()[0]
-    #         return (200, {
-    #             "message": message
-    #         })
-    #     except Exception as e:
-    #         return (500, {
-    #             "message": "paisi na"
-    #         })
+    @app.route("/get-messages", "GET")
+    def get_messages(req):
+        try:
+            chatID = req["query"]["chatID"]
+            messages = chats[chatID]
+            if len(messages) == 0:
+                return (400, {
+                    "messages": "Not Found"
+                })
+            return (200, {
+                "messages": messages
+            })
+        except Exception as e:
+            return (500, {
+                "message": "paisi na"
+            })
 
     app.listen(8000, cors=True)
 

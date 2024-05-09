@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { PUBLIC_SERVER_HOST, PUBLIC_SERVER_PORT } from '$env/static/public';
 
 export const actions = {
     login: async ({ locals, request }: {locals: any, request: any}) => {
@@ -20,7 +21,7 @@ export const actions = {
 }
 
 const dblogin = async (username: string, password: string) => {
-    const response = await fetch("http://localhost:8000/log-in", {
+    const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/log-in`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -31,6 +32,6 @@ const dblogin = async (username: string, password: string) => {
         })
     });
     if(!response.ok){
-        throw Error("Could not log in")
+        throw Error("Could not log in");
     }
 }

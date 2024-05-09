@@ -1,75 +1,57 @@
 <script lang="ts">
-  let messages = [
-    {
-      userId: "123",
-      name: "Server",
-      time: "12:15",
-      message: "hi",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-    },
-    {
-      userId: "123",
-      name: "Server",
-      time: "12:15",
-      message: "hi",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-    },
-    {
-      userId: "123",
-      name: "Emon",
-      time: "12:15",
-      message: "hi",
-      image:
-        "https://media.licdn.com/dms/image/D5603AQFrSXRsDj5a9A/profile-displayphoto-shrink_400_400/0/1714418121284?e=1720656000&v=beta&t=zpWTFgXJaNBxenDjASrwqfZaTG1llNn877hCJsWvmTo",
-    },
-  ];
-  let msg = "";
-  let userID = "123";
-  let chatID = "789";
+  import { PUBLIC_SERVER_HOST, PUBLIC_SERVER_PORT } from "$env/static/public";
   import { SendHorizonal } from "lucide-svelte";
+  import { onMount } from "svelte";
 
-  const send = async () => {
-    console.log("fa");
-    try {
-      const res = await fetch(`http://localhost:8000/post-message`, {
+  let messages: any[] = [];
+  let message: string;
+  export let receiver: string;
+  export let username: string;
+
+  onMount(() => {
+    getMessages();
+  });
+
+  const getMessages = async() => {
+    try{
+      const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/get-messages?chatID=${username}-${receiver}`);
+      if(!response.ok){
+        throw Error("Could not get messages");
+      }
+      const resp = await response.json();
+      messages = [...resp.messages];
+    } catch(err){
+      console.error("Could not get messages");
+    }
+  }
+
+  const addMessage = async() => {
+    try{
+      const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/add-message?chatID=${username}-${receiver}`,{
         method: "POST",
-        credentials: "include",
         headers: {
-          "Content-type": "application/json",
+          "Content-type": "application/json"
         },
         body: JSON.stringify({
-          chatID: chatID,
-          userID: userID,
-          message: msg,
-        }),
+          message: message
+        })
       });
-      console.log(res);
-      const item = await res.json();
-    } catch (e) {
-      console.log(e);
+      if(!response.ok){
+        throw Error("Could not add message");
+      }
+      const resp = await response.json();
+      messages = [...resp.messages];
+    } catch(err){
+      console.error("Could not add message");
     }
-  };
-  const addMessage = () => {
-    const newMessage = {
-      userId: "123",
-      name: "Emon",
-      time: "9:17",
-      message: "Hello friend",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-    };
-    messages = [...messages, newMessage];
-    console.log(messages);
-  };
+  }
 </script>
 
 <div
   class="flex flex-col gap-2 w-full px-5 h-full bg-neutral overflow-y-scroll"
 >
   {#each messages as message}
-    {#if message.name === "Emon"}
+    {#if message.sender === username}
       <div class="chat w-full chat-end">
         <div class="chat-image avatar">
           <div class="w-10 rounded-full">
@@ -77,11 +59,10 @@
           </div>
         </div>
         <div class="chat-header">
-          {message.name}
+          {message.sender}
           <time class="text-xs opacity-50">{message.time}</time>
         </div>
         <div class="chat-bubble chat-bubble-accent">{message.message}</div>
-        <div class="chat-footer opacity-50">Seen at 12:46</div>
       </div>
     {:else}
       <div class="chat w-full chat-start">
@@ -91,11 +72,10 @@
           </div>
         </div>
         <div class="chat-header">
-          {message.name}
+          {message.sender}
           <time class="text-xs opacity-50">{message.time}</time>
         </div>
         <div class="chat-bubble chat-bubble-info">{message.message}</div>
-        <div class="chat-footer opacity-50">Delivered</div>
       </div>
     {/if}
   {/each}
@@ -106,7 +86,7 @@
       type="text"
       class="grow"
       placeholder="Write a message"
-      bind:value={msg}
+      bind:value={message}
       on:submit={addMessage}
     />
     <button on:click={addMessage}><SendHorizonal class="h-4 w-4" /></button>
