@@ -6,16 +6,7 @@ def main():
     users = {
         'saged': ('sajid', 'notadoctor')
     }
-    chats = {
-        "saged-emon": [
-            {
-                "sender": "saged",
-                "time": datetime.now(),
-                "message": "hello",
-                "image": "image"
-            }
-        ]
-    }
+    chats = {}
 
     # Auth
     @app.route("/sign-up", "POST")
@@ -94,21 +85,46 @@ def main():
 
     # Chat
     @app.route("/add-message", "POST")
-    def post_message(req):
+    def add_message(req):
         try:
             chatID = req["query"]["chatID"]
+            # print(req["body"])
             message = req["body"]["message"]
             sender = req["body"]["sender"]
             image = req["body"]["image"]
-            date = datetime.now().strftime("%Y-%m-%%d %H:%M:%S")
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            chats[chatID].append({
-                "sender": sender,
-                "time": date,
-                "message": message,
-                "image": image
-            })
-
+            if chatID not in chats:
+                chats[chatID] = [{
+                    "sender": sender,
+                    "time": date,
+                    "message": message,
+                    "image": image,
+                }]
+                sender, receiver = chatID.split("-")
+                chatID = receiver + "-" + sender
+                chats[chatID] = [{
+                    "sender": sender,
+                    "time": date,
+                    "message": message,
+                    "image": image,
+                }]
+            else:
+                chats[chatID].append({
+                    "sender": sender,
+                    "time": date,
+                    "message": message,
+                    "image": image,
+                })
+                sender, receiver = chatID.split("-")
+                chatID = receiver + "-" + sender
+                chats[chatID].append({
+                    "sender": sender,
+                    "time": date,
+                    "message": message,
+                    "image": image,
+                })
+            # print(chats[chatID])
             return (200, {
                 "messages": chats[chatID]
             })
@@ -123,7 +139,12 @@ def main():
     def get_messages(req):
         try:
             chatID = req["query"]["chatID"]
-            messages = chats[chatID]
+            print(chatID)
+            if chatID not in chats:
+                messages = []
+            else:
+                messages = chats[chatID]
+            # print(messages)
             if len(messages) == 0:
                 return (400, {
                     "messages": "Not Found"

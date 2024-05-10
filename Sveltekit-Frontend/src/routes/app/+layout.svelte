@@ -1,22 +1,69 @@
 <script lang="ts">
-    import Chats from "$lib/chatbox/chats.svelte";
-    export let data: any;
-    const username = data.username;
-    console.log("username: ", username);
-  </script>
-  
-  <div class="flex w-3/4 h-5/6 gap-4">
-    <div class="flex flex-col w-1/4 h-full overflow-hidden gap-2">
-      <h1 class="text-3xl font-bold border-b-2">Chats</h1>
-      <div class="w-full h-full">
-        <Chats username={username}/>
-      </div>
-      <div class="w-full h-1/6">
-        <a href="/auth/logout"><button class="btn btn-secondary btn-sm w-full">Logout</button></a>
+  import { PUBLIC_SERVER_HOST, PUBLIC_SERVER_PORT } from "$env/static/public";
+  import { onMount } from "svelte";
+
+  export let data: any;
+  const { username, chatid } = data;
+  let users: any[] = [];
+  const getUsers = async () => {
+    try {
+      const response = await fetch(
+        `http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/get-users`
+      );
+      if (!response.ok) {
+        throw Error("Could not get users");
+      }
+      const resp = await response.json();
+      users = [...resp.users];
+    } catch (err) {
+      console.error("Could not get users");
+    }
+  };
+  let interval: any;
+  onMount(() => {
+    interval = setInterval(getUsers, 1000);
+  })
+</script>
+
+<div class="flex w-3/4 h-5/6 gap-4">
+  <div class="flex flex-col w-1/4 h-full overflow-hidden gap-2">
+    <h1 class="text-3xl font-bold border-b-2">Chats</h1>
+    <div class="w-full h-full">
+      <div class="h-full w-full overflow-y-auto">
+        <ul
+          class="flex flex-col gap-2 menu p-4 w-full h-full bg-base-200 text-base-content"
+        >
+          {#each users as user}
+            {#if user.username !== username}
+              <form action="/app/chatroute" method="POST">
+                <input
+                  type="text"
+                  class="hidden"
+                  value={user.username}
+                  name="username"
+                />
+                <li
+                  class={chatid === user.username
+                    ? "bg-secondary"
+                    : "bg-neutral"}
+                >
+                  <button type="submit">{user.name}</button>
+                </li>
+              </form>
+            {/if}
+          {/each}
+        </ul>
       </div>
     </div>
-    <div class="flex flex-col w-3/4 gap-2">
-      <slot/>
+    <div class="w-full h-1/6">
+      <form action="/auth/logout" method="POST">
+        <button type="submit" class="btn btn-sm btn-warning w-full"
+          >Log out</button
+        >
+      </form>
     </div>
   </div>
-  
+  <div class="flex flex-col w-3/4 gap-2">
+    <slot />
+  </div>
+</div>

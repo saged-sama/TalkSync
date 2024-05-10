@@ -13,7 +13,10 @@ export const actions = {
         }
 
         throw redirect(303, "/auth/login");
-    }
+    },
+    gotoLogin: () => {
+        throw redirect(303, "/auth/login");
+    },
 };
 
 const dbregister = async (username: string, name: string, password: string) => {

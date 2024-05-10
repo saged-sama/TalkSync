@@ -55,13 +55,13 @@ class CastAPI:
             "headers": headers,
             "body": body
         }
-        print(req)
+        # print(req)
         return req
     
     def handle_request(self, client_socket):
         try:
             request = client_socket.recv(65536).decode()
-            print(f"Received request:\n{request}\n")
+            # print(f"Received request:\n{request}\n")
             req = self.parse_request(request)
 
             path = req["url"]
