@@ -7,7 +7,7 @@ export const actions = {
         const body = Object.fromEntries(await request.formData());
         // console.log(typeof body.image);
         try {
-            const flag = dbregister(body.username, body.name, body.password, body.image);
+            const flag = await dbregister(body.username, body.name, body.password, body.image);
             if(!flag) throw Error("Registration unsuccessful");
         } catch (err) {
             console.error("Error: ", err);

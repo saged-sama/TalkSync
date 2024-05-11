@@ -5,7 +5,7 @@ export const actions = {
     login: async ({ request, cookies }: { request: any, cookies: any}) => {
         const body = Object.fromEntries(await request.formData());
         try{
-            const isloggedin = dblogin(body.username, body.password);
+            const isloggedin = await dblogin(body.username, body.password);
             if(!isloggedin){
                 throw Error("Could not log in");
             }

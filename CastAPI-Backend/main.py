@@ -103,19 +103,41 @@ def main():
     @app.route("/add-message", "POST")
     def add_message(req):
         try:
+            print(req)
             chatID = req["query"]["chatID"]
             # print(req["body"])
             message = req["body"]["message"]
             sender = req["body"]["sender"]
-            image = req["body"]["image"]
+            rcvdfile = req["body"]["file"]
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            isFile = False
+            filename = "",
+            filetype = "",
+            filepath = ""
+            if "name" in rcvdfile:
+                filename = rcvdfile["name"]
+                filetype = rcvdfile["type"]
+                isFile = True
+                # print(rcvdfile["name"], rcvdfile["type"])
+                ext = rcvdfile["name"].split(".")[-1]
+
+                filepath = f"files/attachments/{chatID.replace("-", "_")}_{sender}_{date.replace(" ", "_").replace("-", "_").replace(":", "_")}.{ext}"
+                # print(filepath)
+                with open(filepath, "wb") as file:
+                    content = bytes(map(int, rcvdfile["content"].split(",")))
+                    file.write(content)
 
             if chatID not in chats:
                 chats[chatID] = [{
                     "sender": sender,
                     "time": date,
                     "message": message,
-                    "image": image,
+                    "file": {
+                        "isFile": isFile,
+                        "name": filename,
+                        "type": filetype,
+                        "path": filepath.replace("/", "-")
+                    },
                 }]
                 sender, receiver = chatID.split("-")
                 chatID = receiver + "-" + sender
@@ -123,14 +145,24 @@ def main():
                     "sender": sender,
                     "time": date,
                     "message": message,
-                    "image": image,
+                    "file": {
+                        "isFile": isFile,
+                        "name": filename,
+                        "type": filetype,
+                        "path": filepath.replace("/", "-")
+                    },
                 }]
             else:
                 chats[chatID].append({
                     "sender": sender,
                     "time": date,
                     "message": message,
-                    "image": image,
+                    "file": {
+                        "isFile": isFile,
+                        "name": filename,
+                        "type": filetype,
+                        "path": filepath.replace("/", "-")
+                    },
                 })
                 sender, receiver = chatID.split("-")
                 chatID = receiver + "-" + sender
@@ -138,7 +170,12 @@ def main():
                     "sender": sender,
                     "time": date,
                     "message": message,
-                    "image": image,
+                    "file": {
+                        "isFile": isFile,
+                        "name": filename,
+                        "type": filetype,
+                        "path": filepath.replace("/", "-")
+                    },
                 })
             # print(chats[chatID])
             return (200, {

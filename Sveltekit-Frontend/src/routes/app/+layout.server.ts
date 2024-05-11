@@ -1,4 +1,3 @@
-import { PUBLIC_SERVER_HOST, PUBLIC_SERVER_PORT } from "$env/static/public";
 import { redirect } from "@sveltejs/kit";
 
 export const load = async ({ params, cookies }: { params: any, cookies: any }) => {
