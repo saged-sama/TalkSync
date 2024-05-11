@@ -21,7 +21,10 @@ npm build      # build project
 ```
 
 **Backend:** <br>
-Set up environment variables for the pocketbase database
+Run command:
+```bash
+python main.py
+```
 
 ## Technology
 
@@ -31,9 +34,6 @@ In the frontend we use
 
 In the backend we use
  - [`Python`](https://www.python.org/) (Socket Programming)
-
-As for our database we use
- - [`PocketBase`](https://pocketbase.io/)
 
 ## Team
  - [`Md Emon Khan`](https://github.com/ignite312/)
