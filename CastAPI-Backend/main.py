@@ -44,14 +44,14 @@ def main():
     @app.route("/sign-up", "POST")
     def register(req):
         try:
-            print(req["body"])
+            # print(req["body"])
             username = req["body"]["username"]
             password = req["body"]["password"]
             name = req["body"]["name"]
             image = req["body"]["image"].replace("/", "-")
 
             users[username] = (name, password, image)
-            print(users)
+            # print(users)
             return (200, {
                 "message": "Successfully registered new user"
             })
