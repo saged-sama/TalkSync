@@ -25,8 +25,8 @@
   })
 </script>
 
-<div class="flex w-3/4 h-5/6 gap-4">
-  <div class="flex flex-col w-1/4 h-full overflow-hidden gap-2">
+<div class="flex w-full md:w-3/4 md:h-5/6 h-full gap-4">
+  <div class="hidden md:flex flex-col w-1/4 h-full overflow-hidden gap-2">
     <h1 class="text-3xl font-bold border-b-2">Chats</h1>
     <div class="w-full h-full">
       <div class="h-full w-full overflow-y-auto">
@@ -63,7 +63,7 @@
       </form>
     </div>
   </div>
-  <div class="flex flex-col w-3/4 gap-2">
+  <div class="flex flex-col md:w-3/4 w-full gap-2">
     <slot />
   </div>
 </div>

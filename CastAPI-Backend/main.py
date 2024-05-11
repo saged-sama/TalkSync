@@ -1,23 +1,57 @@
 from CastAPI import CastAPI
 from datetime import datetime
+import mimetypes
+
+def read_file_info(file_name):
+    mtype, _ = mimetypes.guess_type(file_name)
+    if mtype is None:
+        mtype = "application/octet-stream"
+
+    with open(file_name, "rb") as file:
+        content = file.read()
+    
+    flength = len(content)
+
+    return {
+        "isbin": True,
+        "mimetype": mtype,
+        "content-length": flength,
+        "file": content
+    }
 
 def main():
     app = CastAPI()
     users = {
-        'saged': ('sajid', 'notadoctor')
+        'saged': ('sajid', 'notadoctor', "files-profilepic-image.jpeg")
     }
     chats = {}
+
+    @app.route("/set-profile-picture", "POST")
+    def saveimage(req):
+        username = req["body"]["username"]
+        image = bytes(map(int, req["body"]['image'].split(',')))
+        ext = req["body"]["type"].split("/")[-1]
+        imageDir = f"files/profilepic/{username}.{ext}"
+
+        with open(imageDir, "wb") as file:
+            file.write(image)
+        
+        return (200, {
+            "image": imageDir
+        })
 
     # Auth
     @app.route("/sign-up", "POST")
     def register(req):
         try:
+            print(req["body"])
             username = req["body"]["username"]
             password = req["body"]["password"]
             name = req["body"]["name"]
+            image = req["body"]["image"].replace("/", "-")
 
-            users[username] = (name, password)
-
+            users[username] = (name, password, image)
+            print(users)
             return (200, {
                 "message": "Successfully registered new user"
             })
@@ -33,7 +67,7 @@ def main():
             username = req["body"]["username"]
             password = req["body"]["password"]
 
-            _, pss = users[username]
+            _, pss, __ = users[username]
             if password == pss:
                 return (200, {
                     "message": "login successful"
@@ -47,32 +81,14 @@ def main():
             return (500, {
                 "message": "Could not log in"
             })
-        
-    @app.route("/search-username", "GET")
-    def search_username(req):
-        try:
-            searchUser = req["query"]["user"]
-            results = []
-            for username in users:
-                if searchUser in username:
-                    name, _ = users[username]
-                    results.append({"username": username, "name": name})
-            return (200, {
-                "users": results
-            })
-        except Exception as e:
-            print("Could not search usernames: ", e)
-            return (500, {
-                "message": "Could not search usernames"
-            })
     
     @app.route("/get-users", "GET")
     def get_users(req):
         try:
             results = []
             for username in users:
-                name, _ = users[username]
-                results.append({"username": username, "name": name})
+                name, _, image = users[username]
+                results.append({"username": username, "name": name, "image": image})
             return (200, {
                 "users": results
             })
@@ -139,7 +155,7 @@ def main():
     def get_messages(req):
         try:
             chatID = req["query"]["chatID"]
-            print(chatID)
+            # print(chatID)
             if chatID not in chats:
                 messages = []
             else:
@@ -156,6 +172,24 @@ def main():
             return (500, {
                 "message": "paisi na"
             })
+        
+    @app.route("/get-image-path", "GET")
+    def get_image_path(req):
+        username = req["query"]["username"]
+        _, __, imagepath = users[username]
+
+        return(200, {
+            "imagepath": imagepath
+        })
+
+    @app.route("/get-file", "GET")
+    def get_image(req):
+        path = req["query"]["path"].replace("-", "/")
+        # print(path)
+        body = read_file_info(path)
+        # print(body)
+        # print(body["mimetype"], body["content-length"])
+        return (200, body)
 
     app.listen(8000, cors=True)
 

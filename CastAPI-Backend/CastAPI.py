@@ -4,8 +4,8 @@ import json
 
 class CastAPI:
     def __init__(self):
-        self.host = socket.gethostbyname("localhost")
-        # self.host = "172.29.176.1"
+        # self.host = socket.gethostbyname("localhost")
+        self.host = "172.29.176.1"
         self.port = 5671
         self.cors = False
         self.routes = {}
@@ -60,7 +60,7 @@ class CastAPI:
     
     def handle_request(self, client_socket):
         try:
-            request = client_socket.recv(65536).decode()
+            request = client_socket.recv(25000000).decode()
             # print(f"Received request:\n{request}\n")
             req = self.parse_request(request)
 
@@ -75,7 +75,7 @@ class CastAPI:
             else:
                 response = self.create_response(req, 400, {"message": self.get_status_name(400)})
 
-            client_socket.sendall(response.encode())
+            client_socket.sendall(response)
 
         except Exception as err:
             print(f"Error handling request: {err}\n")
@@ -102,6 +102,8 @@ class CastAPI:
 
     def create_response(self, req, status, body):
         reqBody = ""
+        reqbinBody = b""
+        isbin = False
         if req["method"] == "OPTIONS":
             headers = "HTTP/1.1 200 OK\r\n"
             headers += "Content-Length: 0\r\n"
@@ -114,8 +116,13 @@ class CastAPI:
         else:
             headers = f"HTTP/1.1 {status} {self.get_status_name(status)}\r\n"
             if isinstance(body, dict):
-                reqBody = json.dumps(body)
-                content_type = "application/json"
+                if "isbin" in body:
+                    content_type = body["mimetype"] + "\r\n" + str(body["content-length"])
+                    reqbinBody += body["file"]
+                    isbin = True
+                else:
+                    reqBody = json.dumps(body)
+                    content_type = "application/json"
             elif isinstance(body, str):
                 reqBody = body
                 content_type = "text/plain"
@@ -133,15 +140,24 @@ class CastAPI:
                 headers += 'Access-Control-Max-Age: 86400\r\n'
         headers += '\r\n'
 
-        response = headers + reqBody
-        # print(response)
-        return response
+        if isbin:
+            # print("initiating")
+            # print(headers)
+            response = headers.encode() + reqbinBody
+            # print("done")
+            return response
+        
+        else:
+            response = headers + reqBody
+            # print("Non bytes", response)
+            return response.encode()
     
     def listen(self, port=5671, cors=False):
         self.port = port
         self.cors = cors
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 25000000)
         server_socket.bind((self.host, self.port))
         server_socket.listen()
 

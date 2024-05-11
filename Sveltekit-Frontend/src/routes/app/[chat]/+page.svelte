@@ -8,6 +8,8 @@
   const { receiver, username } = props;
   let message: string;
   let messages: any[] = [];
+  let receiverProfilePic: string;
+  let senderProfilePic: string;
 
   const getMessages = async () => {
     if(!username || !receiver){
@@ -28,6 +30,7 @@
   };
 
   const addMessage = async () => {
+    console.log("ASAS")
     if (message === "") {
       return;
     }
@@ -56,8 +59,26 @@
       console.error("Could not add message: ", err);
     }
   };
+
+  const getProfilePic = async(username: string) => {
+    try{
+      const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/get-image-path?username=${username}`);
+      if(!response.ok){
+        throw Error("Could not get profile pic");
+      }
+      const resp = await response.json();
+      const imagepath = resp.imagepath;
+      return `http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/get-file?path=${imagepath}`;
+    }
+    catch(err){
+      console.error("Could not get profile pic: ", err);
+      return "";
+    }
+  }
   let interval: any;
-  onMount(() => {
+  onMount(async() => {
+    receiverProfilePic = await getProfilePic(receiver);
+    senderProfilePic = await getProfilePic(username);
     getMessages();
     interval = setInterval(getMessages, 1000);
   })
@@ -72,35 +93,35 @@
 <div
   class="flex flex-col-reverse gap-2 w-full p-5 h-full bg-neutral overflow-y-scroll"
 >
-  {#each messages.slice().reverse() as message}
-    {#if message.sender === username}
+  {#each messages.slice().reverse() as mssg}
+    {#if mssg.sender === username}
       <div class="flex flex-col gap-2 chat w-full chat-end">
         <div class="chat-image avatar">
           <div class="w-10 rounded-full">
-            <img alt="Tailwind CSS chat bubble component" src={message.image} />
+            <img alt="Tailwind CSS chat bubble component" src={senderProfilePic} />
           </div>
         </div>
         <div class="chat-header px-5 text-xl font-bold">
-          {message.sender}
+          {mssg.sender}
         </div>
         <div class="flex flex-col gap-2 chat-bubble chat-bubble-accent">
-          <p>{message.message}</p>
-          <time class="opacity-50 text-xs">{message.time}</time>
+          <p>{mssg.message}</p>
+          <time class="opacity-50 text-xs">{mssg.time}</time>
         </div>
       </div>
     {:else}
       <div class="flex flex-col chat w-full chat-start gap-2">
         <div class="chat-image avatar">
           <div class="w-10 rounded-full">
-            <img alt="Tailwind CSS chat bubble component" src={message.image} />
+            <img alt="Tailwind CSS chat bubble component" src={receiverProfilePic} />
           </div>
         </div>
         <div class="chat-header px-5 text-xl font-bold">
-          {message.sender}
+          {mssg.sender}
         </div>
         <div class="flex flex-col gap-2 chat-bubble chat-bubble-info">
-          <p>{message.message}</p>
-          <time class="text-xs opacity-50">{message.time}</time>
+          <p>{mssg.message}</p>
+          <time class="text-xs opacity-50">{mssg.time}</time>
         </div>
       </div>
     {/if}
