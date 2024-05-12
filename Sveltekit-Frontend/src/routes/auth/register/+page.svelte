@@ -8,7 +8,7 @@
     <form action="?/gotoLogin" method="POST">
       <p class="text-sm">
         Or
-        <button type="submit" class="text-primary">Log in</button>
+        <button type="submit" class="text-accent font-bold">Log in</button>
         to an Existing Account
       </p>
     </form>
@@ -63,7 +63,7 @@
       
       <p class="text-xs text-primary">Upload a profile photo</p>
     </div>
-    <button class="btn btn-secondary btn-md w-full" type="submit"
+    <button class="btn btn-warning btn-md w-full" type="submit"
       >Register</button
     >
   </form>

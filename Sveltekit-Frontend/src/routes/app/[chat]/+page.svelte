@@ -9,6 +9,7 @@
   let message: string;
   let messages: any[] = [];
   let receiverProfilePic: string;
+  let receiverName: string;
   let senderProfilePic: string;
   let attachment: any = undefined;
 
@@ -95,12 +96,26 @@
       return "";
     }
   };
+  const getReceiverName = async() => {
+    try{
+      const response = await fetch(`http://${PUBLIC_SERVER_HOST}:${PUBLIC_SERVER_PORT}/get-user-name?username=${receiver}`);
+      if(!response.ok){
+        throw Error("Could not get receivername");
+      }
+      const resp = await response.json();
+      return resp.name;
+    }catch(err){
+      console.log("Could not get receiver name: ", err);
+      return "";
+    }
+  }
   let interval: any;
   onMount(async () => {
     receiverProfilePic = await getProfilePic(receiver);
     senderProfilePic = await getProfilePic(username);
-    getMessages();
-    interval = setInterval(getMessages, 1000);
+    receiverName = await getReceiverName();
+    await getMessages();
+    interval = setInterval(getMessages, 10);
   });
   onDestroy(() => {
     clearInterval(interval);
@@ -108,10 +123,17 @@
 </script>
 
 <div class="px-2">
-  <h1 class="text-2xl">{receiver}</h1>
+  <h1 class="flex items-center text-2xl gap-2">
+    <img src={receiverProfilePic} alt="ProPic" class="max-w-12 max-h-12">
+    <div class="flex flex-col">
+      <div class="font-bold">{receiverName}</div>
+      <div class="font-bold text-xs text-success">{receiver}</div>
+    </div>
+  </h1>
 </div>
 <div
-  class="flex flex-col-reverse gap-2 w-full p-5 h-full bg-neutral overflow-y-scroll"
+  class="flex flex-col-reverse bg-cover bg-center bg-no-repeat gap-2 w-full p-5 h-full bg-neutral overflow-y-scroll"
+  style="background-image: url('/bg.webp')"
 >
   {#each messages.slice().reverse() as mssg}
     {#if mssg.sender === username}
@@ -124,11 +146,11 @@
             />
           </div>
         </div>
-        <div class="chat-header px-5 text-xl font-bold">
-          {mssg.sender}
-        </div>
         <div class="flex flex-col gap-4 chat-bubble chat-bubble-accent">
-          <div class="p-2">{mssg.message}</div>
+          <div class="chat-header text-xl font-bold text-secondary">
+            {mssg.sender}
+          </div>
+          <div class="py-2">{mssg.message}</div>
           <div>
             {#if mssg.file.isFile}
               {#if mssg.file.type.split("/")[0] === "image"}
@@ -159,11 +181,11 @@
             />
           </div>
         </div>
-        <div class="chat-header px-5 text-xl font-bold">
-          {mssg.sender}
-        </div>
         <div class="flex flex-col gap-4 chat-bubble chat-bubble-info">
-          <div class="p-2">{mssg.message}</div>
+          <div class="chat-header text-xl font-bold  text-orange-600">
+            {mssg.sender}
+          </div>
+          <div class="py-2">{mssg.message}</div>
           <div>
             {#if mssg.file.isFile}
             {#if mssg.file.type.split("/")[0] === "image"}

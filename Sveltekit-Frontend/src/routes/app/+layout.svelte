@@ -21,7 +21,7 @@
   };
   let interval: any;
   onMount(() => {
-    interval = setInterval(getUsers, 1000);
+    interval = setInterval(getUsers, 10);
   })
 </script>
 
@@ -44,8 +44,8 @@
                 />
                 <li
                   class={chatid === user.username
-                    ? "bg-secondary"
-                    : "bg-neutral"}
+                    ? "bg-neutral text-base-100"
+                    : "bg-base-100"}
                 >
                   <button type="submit">{user.name}</button>
                 </li>
@@ -57,7 +57,7 @@
     </div>
     <div class="w-full h-1/6">
       <form action="/auth/logout" method="POST">
-        <button type="submit" class="btn btn-sm btn-warning w-full"
+        <button type="submit" class="btn btn-sm btn-error w-full"
           >Log out</button
         >
       </form>

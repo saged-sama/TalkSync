@@ -8,7 +8,7 @@
     <form action="?/gotoRegister" method="POST">
       <p class="text-sm">
         Or
-        <button type="submit" class="text-primary">Register</button>
+        <button type="submit" class="text-warning font-bold">Register</button>
         a New Account
       </p>
     </form>
@@ -42,6 +42,6 @@
         />
       </label>
     </div>
-    <button class="btn btn-primary btn-md w-full" type="submit">Log in</button>
+    <button class="btn btn-accent btn-md w-full" type="submit">Log in</button>
   </form>
 </div>
